@@ -25,6 +25,7 @@ import android.widget.Toast
 import android.os.Build
 import android.os.Looper
 import android.widget.Button
+import retrofit2.http.Query
 
 class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var locationManager: LocationManager
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var tvCidade: TextView
     private lateinit var tvTemperatura: TextView
     private lateinit var btnAtualizar: Button
+    private lateinit var tvSensacaoTermica: TextView
+    private lateinit var tvQualidadeAr: TextView
 
     companion object {
         private const val REQUEST_CODE_LOCATION = 1001
@@ -46,6 +49,9 @@ class MainActivity : AppCompatActivity(), LocationListener {
         setContentView(R.layout.activity_main)
         tvCidade = findViewById(R.id.tvCidade)
         tvTemperatura = findViewById(R.id.tvTemperatura)
+        tvSensacaoTermica = findViewById(R.id.textView2)
+        tvQualidadeAr = findViewById(R.id.textView)
+
 
         // Inicializa o Retrofit
         val retrofit = Retrofit.Builder()
@@ -158,6 +164,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
                     val data = response.body()
                     tvCidade.text = data?.localInfo?.address?.city ?: "Local desconhecido"
                     tvTemperatura.text = "%.1f°C".format(data?.previsao?.current?.temperature ?: 0.0)
+                    tvSensacaoTermica.text = "Sensação térmica: %.1f°C".format(data?.previsao?.current?.apparent_temperature ?: 0.0)
+                    tvQualidadeAr.text = "Qualidade do ar: ${data?.previsao?.current?.weather_code ?: 0}"
                 } else {
                     tvCidade.text = "Erro: ${response.code()}"
                     Log.e("API", "Erro na resposta: ${response.code()}")
@@ -204,6 +212,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         }
     }
 
+
     interface ApiService {
         @GET("api/local/{latitude}/{longitude}")
         fun getLocationData(
@@ -235,6 +244,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
     data class CurrentWeather(
         val temperature: Double,
         val weather_code: Int,
-        val wind_speed_10m: Double
+        val wind_speed_10m: Double,
+        val apparent_temperature: Double
     )
 }
