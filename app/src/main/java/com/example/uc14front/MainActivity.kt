@@ -214,7 +214,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
 
     interface ApiService {
-        @GET("api/local/{latitude}/{longitude}")
+        @GET("api/local/resumo/{latitude}/{longitude}")
         fun getLocationData(
             @Path("latitude") latitude: Double,
             @Path("longitude") longitude: Double
